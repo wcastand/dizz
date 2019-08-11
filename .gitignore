@@ -31,4 +31,3 @@ cabal.sandbox.config
 *.eventlog
 .stack-work/
 .cache
-public
