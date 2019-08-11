@@ -1,86 +1,77 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { patch_obj } from 'diff-match-patch'
 import { Transition } from 'react-transition-group'
 import { ThemeProvider } from 'styled-components'
 
+import useToggle from './components/use-toggle'
+import HelpModal from './components/help-modal'
 import { useShortcut, diff, add, rm } from './utils'
 import theme, { GlobalStyle } from './theme'
-import { Diff, Container, Btn, BtnGroup, Area, Wrapper } from './styles'
+import {
+  Title,
+  Subtitle,
+  SwitchContainer,
+  NavBar,
+  Diff,
+  Container,
+  Area,
+  Wrapper,
+  Helper,
+} from './styles'
 
-const r = `import React from 'react'
-import ReactDOM from 'react-dom'
-import Root from './Root'
-import * as serviceWorker from './serviceWorker'
-
-import 'isomorphic-unfetch'
-
-ReactDOM.render(<Root />, document.body)
-serviceWorker.unregister()`
-
-const t = `import React from 'react'
-import ReactDOM from 'react-dom'
-import SueprApp from './SueprApp'
-import * as serviceWorker from './sw'
-
-ReactDOM.render(<SueprApp />, document.body)
-serviceWorker.unregister()`
+const ff = `{ page: 2, per_page: 3, total: 12, total_pages: 4, data: [ { id: 4, email: 'eve.holt@reqres.in', first_name: 'Eve', last_name: 'Holt', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/marcoramires/128.jpg' }, { id: 5, email: 'charles.morris@reqres.in', first_name: 'Charles', last_name: 'Morris', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/stephenmoon/128.jpg' }, { id: 6, email: 'tracey.ramos@reqres.in', first_name: 'Tracey', last_name: 'Ramos', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/bigmancho/128.jpg' } ] }`
+const tt = `{ page: 2, per_page: 2, total: 2, total_pages: 4, data: [ { id: 4, email: 'eve.holt@gmail.in', first_name: 'Eve', last_name: 'Holt', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/marcoramires/128.jpg' }, { id: 5, email: 'charles.morris@reqres.in', first_name: 'Charles', last_name: 'Morris', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/stephenmoon/128.jpg' }, { id: 6, email: 'tracey.ramos@reqres.in', first_name: 'Tracey', last_name: 'Ramos', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/bigmancho/128.jpg' } ] }`
 
 const App: React.FC = () => {
-  const [animate, setAnimate] = useState(false)
-  const [show, setShow] = useState(false)
-  const [from, setF] = useState(r)
-  const [to, setT] = useState(t)
-  const [d, setD] = useState<patch_obj[]>([])
-
-  const toggleDiff = () => {
-    setShow(!show)
-    doAnimate()
-  }
+  const [from, setF] = useState('')
+  const [to, setT] = useState('')
+  const [help, toggleHelp] = useState(false)
+  const [d, setD] = useState<[number, string][]>([])
+  const [Toggle, show, setShow] = useToggle({ left: 'Editor', right: 'Show diff' })
   const getDiff = useCallback(async () => {
     setD(diff(from, to))
   }, [from, to])
 
-  const doAnimate = useCallback(() => {
-    setAnimate(!show)
-  }, [show])
-
   useEffect(() => {
     getDiff()
   }, [from, getDiff])
-  useShortcut({ key: 70 }, toggleDiff) // f
-  console.log(d)
+  useShortcut({ key: 70 }, () => setShow(!show)) // f
+  useShortcut({ key: 70, ctrl: true }, () => setShow(!show)) // f
+  useShortcut({ key: 191 }, () => toggleHelp(!help)) // ? show help modal
 
   return (
     <ThemeProvider theme={theme}>
       <>
         <GlobalStyle />
-        <BtnGroup>
-          <Btn active={show} onClick={toggleDiff}>
-            {show ? 'Hide diff' : 'Show diff'}
-          </Btn>
-        </BtnGroup>
+        <HelpModal show={help} toggleHelp={toggleHelp} />
+        <NavBar>
+          <Title>
+            Dizz<Subtitle>diff checker</Subtitle>
+            <Helper onClick={() => toggleHelp(!help)}>?</Helper>
+          </Title>
+          <SwitchContainer>{Toggle}</SwitchContainer>
+        </NavBar>
         <Wrapper>
           <Container>
             <Area
               onChange={e => setF(e.target.value)}
               value={from}
-              placeholder='Enter your original text...'
+              placeholder='Paste your original text here...'
             />
             <Area
               onChange={e => setT(e.target.value)}
               value={to}
-              placeholder='Enter your changed text...'
+              placeholder='Paste your diff text here...'
             />
           </Container>
           <Transition
-            in={animate}
+            in={show}
             timeout={{ exit: 300, enter: 0, appear: 300 }}
             unmountOnExit
             mountOnEnter>
             {state => (
               <Container state={state}>
-                <Diff>{rm(from, d)}</Diff>
-                <Diff>{add(to, d)}</Diff>
+                <Diff>{rm(d)}</Diff>
+                <Diff>{add(d)}</Diff>
               </Container>
             )}
           </Transition>

@@ -1,59 +1,50 @@
 import React, { useEffect, useCallback } from 'react'
-import { diff_match_patch, patch_obj } from 'diff-match-patch'
+import { diff_match_patch } from 'diff-match-patch'
 import { RM, ADDED } from './styles'
 
 const dmp = new diff_match_patch()
-const parsedPatches = (nb: number, patches: patch_obj[]) =>
-  patches.map(patch => {
-    const filteredDiffs = patch.diffs.filter(([k, _]) => k !== nb)
-    return {
-      ...patch,
-      search: filteredDiffs.reduce<string>((acc, [_, v]) => `${acc}${v}`, ''),
-      diffs: filteredDiffs,
+export const diff = (from: string, to: string): any => {
+  const diffs = dmp.diff_main(from, to)
+  dmp.diff_cleanupSemantic(diffs)
+  return diffs
+}
+
+export const add = (d: [number, string][]) =>
+  d.map(([s, str], idx) => {
+    switch (s) {
+      case 1:
+        return <ADDED key={`diff_${idx}`}>{str}</ADDED>
+      case -1:
+        if (d[idx + 1] && d[idx - 1] && d[idx - 1][0] !== 1 && d[idx + 1][0] !== 1)
+          return (
+            <RM key={`diff_${idx}`} title={str}>
+              {' '}
+            </RM>
+          )
+        return null
+      case 0:
+      default:
+        return str
     }
   })
-
-const hasChanges = (diffs: [number, string][]): boolean => diffs.some(([k, _]) => k !== 0)
-
-export const diff = (from: string, to: string): patch_obj[] => dmp.patch_make(from, to)
-export const rm = (from: string, patches: patch_obj[]): React.ReactNode[] => {
-  return parsedPatches(1, patches).reduce<React.ReactNode[]>(
-    (e, patch, i) => {
-      console.log(patches)
-
-      if (patch.diffs[1][1] && hasChanges(patch.diffs)) {
-        const last: string = e.pop() as string
-        const rest: React.ReactNode[] = e || []
-        const [start, ...end] = last.split(patch.diffs[1][1])
-        return [
-          ...rest,
-          start,
-          <RM key={`urm_${i}`}>{patch.diffs[1][1]}</RM>,
-          end.join(patch.diffs[1][1]),
-        ]
-      } else return e
-    },
-    [from],
-  )
-}
-export const add = (to: string, patches: patch_obj[]): React.ReactNode[] => {
-  return parsedPatches(-1, patches).reduce<React.ReactNode[]>(
-    (e, patch, i) => {
-      if (patch.diffs[1][1] && hasChanges(patch.diffs)) {
-        const last: string = e.pop() as string
-        const rest: React.ReactNode[] = e || []
-        const [start, ...end] = last.split(patch.diffs[1][1])
-        return [
-          ...rest,
-          start,
-          <ADDED key={`urm_${i}`}>{patch.diffs[1][1]}</ADDED>,
-          end.join(patch.diffs[1][1]),
-        ]
-      } else return e
-    },
-    [to],
-  )
-}
+export const rm = (d: [number, string][]) =>
+  d.map(([s, str], idx) => {
+    switch (s) {
+      case 1:
+        if (d[idx + 1] && d[idx - 1] && d[idx - 1][0] !== -1 && d[idx + 1][0] !== -1)
+          return (
+            <ADDED key={`diff_${idx}`} title={str}>
+              {' '}
+            </ADDED>
+          )
+        return null
+      case -1:
+        return <RM key={`diff_${idx}`}>{str}</RM>
+      case 0:
+      default:
+        return str
+    }
+  })
 
 const defaultKeys = {
   ctrl: false,

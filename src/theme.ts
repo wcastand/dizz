@@ -3,6 +3,33 @@ import get from 'lodash/fp/get'
 import reset from 'styled-reset'
 import { createGlobalStyle, DefaultTheme } from 'styled-components'
 
+export type ColorKeys =
+  | 'white'
+  | 'b10'
+  | 'b20'
+  | 'b30'
+  | 'b40'
+  | 'b50'
+  | 'b60'
+  | 'b70'
+  | 'b80'
+  | 'black'
+  | 'error.light'
+  | 'error.default'
+  | 'error.dark'
+  | 'success.light'
+  | 'success.default'
+  | 'success.dark'
+  | 'warning.light'
+  | 'warning.default'
+  | 'warning.dark'
+  | 'yellow.light'
+  | 'yellow.default'
+  | 'yellow.dark'
+  | 'highlight.alert'
+  | 'highlight.purple'
+  | 'highlight.cyan'
+
 export const theme: DefaultTheme = {
   colors: {
     white: '#FFFFFF',
@@ -47,10 +74,10 @@ export const props = (fn: (_: { theme: DefaultTheme }) => any) => (props: {
   theme: DefaultTheme
 }) => idx(props, fn)
 
-export const color = (color: string) => (props: { theme: DefaultTheme }) =>
+export const color = (color: ColorKeys) => (props: { theme: DefaultTheme }) =>
   get(color, props.theme.colors)
 
-export const colorSwitch = (state: string, on: string, off: string) => (props: {
+export const colorSwitch = (state: string, on: ColorKeys, off: ColorKeys) => (props: {
   theme: DefaultTheme
 }) => color(get(state, props) ? on : off)
 
@@ -74,7 +101,7 @@ export const GlobalStyle = createGlobalStyle`
   #root {
     display:grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 20px 1fr;
+    grid-template-rows: 40px 1fr;
     grid-row-gap: 24px;
     grid-column-gap: 24px;
     width: 100%;
