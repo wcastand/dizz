@@ -15,7 +15,7 @@ export const add = (d: [number, string][]) =>
       case 1:
         return <ADDED key={`diff_${idx}`}>{str}</ADDED>
       case -1:
-        if (d[idx + 1] && d[idx - 1] && d[idx - 1][0] !== 1 && d[idx + 1][0] !== 1)
+        if ((d[idx - 1] && d[idx - 1][0] !== 1) || (d[idx + 1] && d[idx + 1][0] !== 1))
           return (
             <RM key={`diff_${idx}`} title={str}>
               {' '}
@@ -31,7 +31,7 @@ export const rm = (d: [number, string][]) =>
   d.map(([s, str], idx) => {
     switch (s) {
       case 1:
-        if (d[idx + 1] && d[idx - 1] && d[idx - 1][0] !== -1 && d[idx + 1][0] !== -1)
+        if ((d[idx - 1] && d[idx - 1][0] !== -1) || (d[idx + 1] && d[idx + 1][0] !== -1))
           return (
             <ADDED key={`diff_${idx}`} title={str}>
               {' '}

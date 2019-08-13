@@ -21,7 +21,7 @@ export const Container = styled.div<{ state?: any }>`
 `
 
 export const Diff = styled.pre`
-  overflow: hidden;
+  overflow-x: hidden;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   word-break: break-word;
@@ -38,7 +38,7 @@ export const Diff = styled.pre`
 `
 
 export const Area = styled.textarea.attrs({ wrap: 'off' })`
-  overflow: hidden;
+  overflow-x: hidden;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   word-break: break-word;
