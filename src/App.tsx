@@ -51,7 +51,7 @@ const App: React.FC = () => {
           <SwitchContainer>{Toggle}</SwitchContainer>
         </NavBar>
         <Wrapper>
-          <Container>
+          <Container show={!show}>
             <Area
               onChange={e => setF(e.target.value)}
               value={from}

@@ -6,11 +6,11 @@ export const Wrapper = styled.div`
   width: 100%;
 `
 
-export const Container = styled.div<{ state?: any }>`
+export const Container = styled.div<{ show?: boolean; state?: any }>`
   position: absolute;
   width: 100%;
   height: 100%;
-  display: grid;
+  display: ${props => (props.show ? 'grid' : typeof props.show === 'undefined' ? 'grid' : 'none')};
   padding: 0 24px 24px 24px;
   border-radius: 8px;
   grid-template-columns: 1fr 1fr;
@@ -22,6 +22,7 @@ export const Container = styled.div<{ state?: any }>`
 
 export const Diff = styled.pre`
   overflow-x: hidden;
+  overflow-y: auto;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   word-break: break-word;
@@ -39,6 +40,7 @@ export const Diff = styled.pre`
 
 export const Area = styled.textarea.attrs({ wrap: 'off' })`
   overflow-x: hidden;
+  overflow-y: auto;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   word-break: break-word;
