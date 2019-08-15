@@ -3,7 +3,8 @@ import { diff_match_patch } from 'diff-match-patch'
 import { RM, ADDED } from './styles'
 
 const dmp = new diff_match_patch()
-export const diff = (from: string, to: string): any => {
+export const diff = (from: string | null, to: string | null): [number, string][] => {
+  if (!from || !to) return []
   const diffs = dmp.diff_main(from, to)
   dmp.diff_cleanupSemantic(diffs)
   return diffs
