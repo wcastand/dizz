@@ -33,7 +33,7 @@ export const Diff = styled.pre`
   margin: 0;
   padding: 16px;
   border-radius: 4px;
-  color: ${color('b70')};
+  color: ${color('white')};
   border: 1px solid ${color('black')};
   background-color: ${color('black')};
 `
