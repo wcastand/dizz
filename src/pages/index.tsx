@@ -6,15 +6,15 @@ import useSwitch from '../components/use-switch'
 import useDarkMode from '../components/use-darkmode'
 
 const container = tw`h-screen flex flex-col bg-white text-gray-900 overflow-hidden dark:(bg-gray-900 text-white)`
-const header = tw`grid grid-cols-2 px-4 pt-4 items-start`
-const editors = tw`h-full overflow-hidden flex-1 grid grid-cols-2 p-4 gap-4`
+const header = tw`grid grid-cols-1 md:(grid-cols-2) px-4 pt-4 items-start`
+const editors = tw`h-full overflow-hidden flex-1 grid grid-cols-1 md:(grid-cols-2) p-4 gap-4`
 const editor = tw`flex col-span-1 border border-gray-300 rounded p-2 text-base font-sans bg-white text-gray-900 dark:(border-gray-700 bg-gray-900 text-white)`
 const board = tw`col-span-1 border border-gray-300 rounded p-2 text-base font-sans overflow-y-scroll dark:(border-gray-700)`
 
 const title = tw`font-bold text-3xl text-left`
 const subtitle = tw`text-base text-gray-500`
 
-const switchContainer = tw`flex flex-row items-center px-4`
+const switchContainer = tw`flex flex-row items-center px-0 md:px-4`
 
 const base = apply`text-gray-300 text-base dark:(text-gray-700)`
 const added = apply`text-green-500 dark:(text-green-500)`
@@ -84,7 +84,7 @@ function Home() {
         <h1 className={title}>
           DizzApp<span className={subtitle}>.dev</span>
         </h1>
-        <div className={tw`flex flex-row justify-end items-center`}>
+        <div className={tw`flex flex-col md:flex-row justify-end md:items-center`}>
           <Switch left='Edit' right='Diff' state={editState} toggle={editToggle}>
             {EditSwitch}
           </Switch>
@@ -97,8 +97,12 @@ function Home() {
       <div className={editors}>
         {editState ? (
           <>
-            <textarea className={editor} value={editText} onChange={e => setEditText(e.target.value)}></textarea>
-            <textarea className={editor} value={diffText} onChange={e => setDiffText(e.target.value)}></textarea>
+            <textarea
+              className={editor}
+              placeholder='original text...'
+              value={editText}
+              onChange={e => setEditText(e.target.value)}></textarea>
+            <textarea className={editor} placeholder='new text...' value={diffText} onChange={e => setDiffText(e.target.value)}></textarea>
           </>
         ) : (
           <>
