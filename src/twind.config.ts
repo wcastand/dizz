@@ -1,5 +1,6 @@
+import { DarkMode } from 'twind'
 export default {
-  darkMode: 'class',
+  darkMode: 'class' as DarkMode,
   theme: {
     extend: {
       fontFamily: {
